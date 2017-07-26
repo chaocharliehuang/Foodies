@@ -12,8 +12,8 @@ class UserManager(models.Manager):
         last_name = request.POST['last_name']
         email = request.POST['email']
         zipcode = request.POST['zipcode']
-        pw = request.POST['pw']
-        pw_confirm = request.POST['pw_confirm']
+        pw = request.POST['password']
+        pw_confirm = request.POST['password_confirm']
         fav_food = request.POST.getlist('fav_food')
 
         request.session['first_name'] = first_name
@@ -29,6 +29,9 @@ class UserManager(models.Manager):
             errors['email'] = 'Email cannot be blank!'
         elif not EMAIL_REGEX.match(email):
             errors['email'] = 'Invalid email address!'
+        
+        if len(zipcode) != 5 or not zipcode.isnumeric():
+            errors['zipcode'] = 'Zipcode must be exactly 5 numbers'
         
         if len(pw) < 8:
             errors['pw'] = 'Password must be at least 8 characters!'
@@ -47,7 +50,7 @@ class User(models.Model):
     email = models.CharField(max_length=255)
     zipcode = models.CharField(max_length=5)
     pw = models.CharField(max_length=255)
-    friends = models.ForeignKey('self', on_delete=models.CASCADE)
+    friends = models.ManyToManyField('self', default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = UserManager()

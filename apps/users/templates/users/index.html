@@ -1,1 +1,21 @@
-<h1>user homepage</h1>
+{% if messages %}
+<div style="color:red;">
+    <h5>ERRORS:</h5>
+    <ul>
+        {% for message in messages %}
+        <li>- {{message}}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<h1>Welcome, {{ request.session.name }}!</h1>
+
+<a href="{% url 'users:logout' %}">Logout</a>
+
+<h1>Favorite foods:</h1>
+<ul>
+{% for food in fav_foods %}
+<li>{{ food.category }}</li>
+{% endfor %}
+</ul>

@@ -111,6 +111,16 @@
                 <div>
                     <a href="{% url 'users:signup' %}">SIGN UP</a> to get automatic food suggestions based on you and your friends' preferences!
                 </div>
+                {% if messages %}
+                <div style="color:red; text-align:center;">
+                    <h5>ERRORS:</h5>
+                    <ul>
+                        {% for message in messages %}
+                        <li>- {{message}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
             </div>
 
             <div class="row">
