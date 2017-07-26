@@ -6,7 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
-        <style>
+        <!-- {% load static %}
+         <link rel="stylesheet" href="{% static 'search/css/nav_form_results.css' %}">  -->
+         <style>
             .navbar-fixed {
                 height: 80px;
             }
@@ -15,7 +17,7 @@
                 z-index: 999;
             }
 
-            .register_msg {
+            .signup_msg {
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -70,7 +72,7 @@
                     width: 100%;
                 }
             }
-        </style>
+        </style> 
     </head>
     <body>
         <div class="navbar-fixed">
@@ -86,7 +88,7 @@
                             <a href=""><i class="material-icons left">info</i>About</a>
                         </li>
                         <li>
-                            <a href="{% url 'users:register' %}"><i class="material-icons left">card_membership</i>Register</a>
+                            <a href="{% url 'users:signup' %}"><i class="material-icons left">card_membership</i>Sign Up</a>
                         </li>
                     </ul>
                     <ul class="side-nav" id="mobile-demo">
@@ -94,7 +96,7 @@
                             <a href=""><i class="material-icons left">info</i>About</a>
                         </li>
                         <li>
-                            <a href="{% url 'users:register' %}"><i class="material-icons left">card_membership</i>Register</a>
+                            <a href="{% url 'users:signup' %}"><i class="material-icons left">card_membership</i>Sign Up</a>
                         </li>
                     </ul>
                 </div>
@@ -102,12 +104,12 @@
         </div>
 
         <div class="container">
-            <div class="register_msg">
+            <div class="signup_msg">
                 <div style="margin-right:10px;">
-                    <a href="{% url 'users:register' %}" class="btn btn-floating deep-orange pulse"><i class="material-icons">card_membership</i></a>
+                    <a href="{% url 'users:signup' %}" class="btn btn-floating deep-orange pulse"><i class="material-icons">card_membership</i></a>
                 </div>
                 <div>
-                    <a href="{% url 'users:register' %}">REGISTER</a> to get automatic food suggestions based on you and your friends' preferences!
+                    <a href="{% url 'users:signup' %}">SIGN UP</a> to get automatic food suggestions based on you and your friends' preferences!
                 </div>
             </div>
 

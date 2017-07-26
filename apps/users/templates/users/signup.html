@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Sign Up</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
+        <style>
+            .navbar-fixed {
+                height: 80px;
+            }
+
+            .navbar-fixed {
+                z-index: 999;
+            }
+
+            .signup_msg {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            /* label color */
+            .input-field label {
+                color: rgb(216, 67, 21);
+            }
+            /* label focus color */
+            .input-field input:focus + label {
+                color: rgb(216, 67, 21) !important;
+            }
+            /*  label underline focus color */
+            .input-field input:focus {
+                border-bottom: 1px solid rgb(216, 67, 21) !important;
+                box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;
+            }
+            /* valid color */
+            .input-field input.valid {
+                border-bottom: 1px solid rgb(216, 67, 21) !important;
+                box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;
+            }
+            /* invalid color */
+            .input-field input.invalid {
+                border-bottom: 1px solid rgb(216, 67, 21) !important;;
+                box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;;
+            }
+
+            .results {
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+
+            .card {
+                width: 49%;
+            }
+
+            .business_photos {
+                width: 100%;
+            }
+
+            @media all and (max-width: 550px) {
+                .navbar-fixed {
+                    height: 70px;
+                }
+            }
+
+            @media all and (max-width: 830px) {
+                .card {
+                    width: 100%;
+                }
+            }
+
+            /* SPECIFIC TO SIGNUP */
+            .heading_msg {
+                  text-align: center; 
+            }
+
+             ul.dropdown-content.select-dropdown li span {
+                color: rgb(216, 67, 21);
+            }
+
+            .checkbox-orange[type="checkbox"]:checked + label:after {
+                border: 2px solid rgb(216, 67, 21);
+                background-color: rgb(216, 67, 21);
+            }
+
+            button {
+                margin-bottom: 30px;
+            }
+        </style> 
+    </head>
+    <body>
+        <div class="navbar-fixed">
+            <nav>
+                <div class="nav-wrapper deep-orange darken-2">
+                    <a href="/" class="brand-logo center">
+                        <i class="material-icons">restaurant</i>Foodies
+                        <i class="material-icons right">restaurant</i>
+                    </a>
+                    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+                    <ul class="right hide-on-med-and-down">
+                        <li>
+                            <a href=""><i class="material-icons left">info</i>About</a>
+                        </li>
+                        <li class="active">
+                            <a href="{% url 'users:signup' %}"><i class="material-icons left">card_membership</i>Sign Up</a>
+                        </li>
+                    </ul>
+                    <ul class="side-nav" id="mobile-demo">
+                        <li>
+                            <a href=""><i class="material-icons left">info</i>About</a>
+                        </li>
+                        <li class="active">
+                            <a href="{% url 'users:signup' %}"><i class="material-icons left">card_membership</i>Sign Up</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <div class="container center">
+            <div class="heading_msg">
+                <h5>Sign Up</h5>
+                <p>No more wondering what to eat!
+                <br>
+                Get <b>automatic food suggestions</b> based on you and your friends' preferences!</p>
+            </div>
+
+            <form id="form_signup" action="{% url 'users:process_signup' %}" method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col s12 m6">
+                        <div class="input-field">
+                            <input type="text" name="first_name" id="first_name" class="validate">
+                            <label for="first_name">FIRST NAME</label>
+                        </div>
+                    </div>
+                    <div class="col s12 m6">
+                        <div class="input-field">
+                            <input type="text" name="last_name" id="last_name" class="validate">
+                            <label for="last_name">LAST NAME</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12 m6">
+                        <div class="input-field">
+                            <input type="email" name="email" id="email" class="validate">
+                            <label for="email">EMAIL</label>
+                        </div>
+                    </div>
+                    <div class="col s12 m6">
+                        <div class="input-field">
+                            <input type="text" name="zipcode" id="zipcode" class="validate">
+                            <label for="zipcode">ZIP CODE</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12 m6">
+                        <div class="input-field">
+                            <input type="password" name="password" id="password" class="validate">
+                            <label for="password">PASSWORD</label>
+                        </div>
+                    </div>
+                    <div class="col s12 m6">
+                        <div class="input-field">
+                            <input type="password" name="password_confirm" id="password_confirm" class="validate">
+                            <label for="password_confirm">CONFIRM PASSWORD</label>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="text-align:center;">Sometimes, having too many choices is a bad thing!
+                <br>
+                Pick up to only <b>FIVE</b> of your favorite categories:</p>
+
+                <div class="row">
+                    <div class="col s6 m3">
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="american" name="fav_food" value="1">
+                            <label for="american">American</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="barbeque" name="fav_food" value="2">
+                            <label for="barbeque">Barbeque</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="breakfast" name="fav_food" value="3">
+                            <label for="breakfast">Breakfast / Brunch</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="buffets" name="fav_food" value="4">
+                            <label for="buffets">Buffets</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="burgers" name="fav_food" value="5">
+                            <label for="burgers">Burgers</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="cajun" name="fav_food" value="6">
+                            <label for="cajun">Cajun / Creole</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="chinese" name="fav_food" value="7">
+                            <label for="chinese">Chinese</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="diners" name="fav_food" value="8">
+                            <label for="diners">Diners</label>
+                        </p>
+                    </div>
+
+                    <div class="col s6 m3">
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="fastfood" name="fav_food" value="9">
+                            <label for="fastfood">Fast Food</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="filipino" name="fav_food" value="10">
+                            <label for="filipino">Filipino</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="french" name="fav_food" value="11">
+                            <label for="french">French</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="greek" name="fav_food" value="12">
+                            <label for="greek">Greek</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="halal" name="fav_food" value="13">
+                            <label for="halal">Halal</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="hawaiian" name="fav_food" value="14">
+                            <label for="hawaiian">Hawaiian</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="indian" name="fav_food" value="15">
+                            <label for="indian">Indian</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="italian" name="fav_food" value="16">
+                            <label for="italian">Italian</label>
+                        </p>
+                    </div>
+
+                    <div class="col s6 m3">
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="japanese" name="fav_food" value="17">
+                            <label for="japanese">Japanese</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="korean" name="fav_food" value="18">
+                            <label for="korean">Korean</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="latinamerican" name="fav_food" value="19">
+                            <label for="latinamerican">Latin American</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="mediterranean" name="fav_food" value="20">
+                            <label for="mediterranean">Mediterranean</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="mexican" name="fav_food" value="21">
+                            <label for="mexican">Mexican</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="middleeastern" name="fav_food" value="22">
+                            <label for="middleeastern">Middle Eastern</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="pizza" name="fav_food" value="23">
+                            <label for="pizza">Pizza</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="sandwiches" name="fav_food" value="24">
+                            <label for="sandwiches">Sandwiches</label>
+                        </p>
+                    </div>
+
+                    <div class="col s6 m3">
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="seafood" name="fav_food" value="25">
+                            <label for="seafood">Seafood</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="steakhouses" name="fav_food" value="26">
+                            <label for="steakhouses">Steakhouses</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="tapas" name="fav_food" value="27">
+                            <label for="tapas">Tapas / Small Plates</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="thai" name="fav_food" value="28">
+                            <label for="thai">Thai</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="vegetarian" name="fav_food" value="29">
+                            <label for="vegetarian">Vegetarian / Vegan</label>
+                        </p>
+                        <p>
+                            <input class="checkbox-orange filled-in" type="checkbox" id="vietnamese" name="fav_food" value="30">
+                            <label for="vietnamese">Vietnamese</label>
+                        </p>
+                    </div>
+                </div>
+
+                <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Sign Up
+                    <i class="material-icons right">card_membership</i>
+                </button>
+            </form>
+
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js"></script>
+        <script>
+            $(".button-collapse").sideNav();
+            $('select').material_select();
+        </script>
+    </body>
+</html>

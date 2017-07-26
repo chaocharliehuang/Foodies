@@ -1,0 +1,63 @@
+.navbar-fixed {
+    height: 80px;
+}
+
+.navbar-fixed {
+    z-index: 999;
+}
+
+.register_msg {
+    display: inline-block;
+    justify-content: center;
+    align-items: center;
+}
+
+/* label color */
+.input-field label {
+    color: rgb(216, 67, 21);
+}
+/* label focus color */
+.input-field input:focus + label {
+    color: rgb(216, 67, 21) !important;
+}
+/*  label underline focus color */
+.input-field input:focus {
+    border-bottom: 1px solid rgb(216, 67, 21) !important;
+    box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;
+}
+/* valid color */
+.input-field input.valid {
+    border-bottom: 1px solid rgb(216, 67, 21) !important;
+    box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;
+}
+/* invalid color */
+.input-field input.invalid {
+    border-bottom: 1px solid rgb(216, 67, 21) !important;;
+    box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;;
+}
+
+.results {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 49%;
+}
+
+.business_photos {
+    width: 100%;
+}
+
+@media all and (max-width: 550px) {
+    .navbar-fixed {
+        height: 70px;
+    }
+}
+
+@media all and (max-width: 830px) {
+    .card {
+        width: 100%;
+    }
+}
