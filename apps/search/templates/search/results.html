@@ -1,0 +1,33 @@
+{% for business in businesses %}
+<div class="card horizontal hoverable" style="display: none;" business_id="{{ business.id }}">
+    <div class="card-image">
+        <a href="">
+            <img src="{{ business.image_url }}" alt="restaurant image" style="height:150px; width:150px;">
+        </a>
+    </div>
+    <div class="card-stacked">
+        <div class="card-content">
+            <a href="" class="name_link">
+                <h5>{{ business.name }}</h5>
+            </a>
+            <p>
+                <b>Rating:</b> {{ business.rating }} | 
+                <b>Reviews:</b> {{ business.review_count }} | 
+                <b>Price:</b> {{ business.price }}
+            </p>
+            <p>
+                {{ business.location.city }}, 
+                {{ business.location.state }} | 
+                <a href="{{ business.url }}" target="_blank">Yelp</a> | 
+                <a href="https://www.google.com/maps/place/{{ business.location.address1 }} {{ business.location.city }} {{ business.location.state }}" target="_blank">Map</a>
+            </p> 
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+    $('.card').each(function(i) {
+        $(this).delay(200*i).fadeIn(300);
+    });
+</script>

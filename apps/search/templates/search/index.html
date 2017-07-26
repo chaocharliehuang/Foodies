@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Foodies</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
+        <style>
+            .navbar-fixed {
+                height: 80px;
+            }
+
+            .navbar-fixed {
+                z-index: 999;
+            }
+
+            .register_msg {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            /* label color */
+            .input-field label {
+                color: rgb(216, 67, 21);
+            }
+            /* label focus color */
+            .input-field input:focus + label {
+                color: rgb(216, 67, 21) !important;
+            }
+            /*  label underline focus color */
+            .input-field input:focus {
+                border-bottom: 1px solid rgb(216, 67, 21) !important;
+                box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;
+            }
+            /* valid color */
+            .input-field input.valid {
+                border-bottom: 1px solid rgb(216, 67, 21) !important;
+                box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;
+            }
+            /* invalid color */
+            .input-field input.invalid {
+                border-bottom: 1px solid rgb(216, 67, 21) !important;;
+                box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;;
+            }
+
+            .results {
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+
+            .card {
+                width: 49%;
+            }
+
+            .business_photos {
+                width: 100%;
+            }
+
+            @media all and (max-width: 550px) {
+                .navbar-fixed {
+                    height: 70px;
+                }
+            }
+
+            @media all and (max-width: 830px) {
+                .card {
+                    width: 100%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="navbar-fixed">
+            <nav>
+                <div class="nav-wrapper deep-orange darken-2">
+                    <a href="" class="brand-logo center">
+                        <i class="material-icons">restaurant</i>Foodies
+                        <i class="material-icons right">restaurant</i>
+                    </a>
+                    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+                    <ul class="right hide-on-med-and-down">
+                        <li>
+                            <a href=""><i class="material-icons left">info</i>About</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'users:register' %}"><i class="material-icons left">card_membership</i>Register</a>
+                        </li>
+                    </ul>
+                    <ul class="side-nav" id="mobile-demo">
+                        <li>
+                            <a href=""><i class="material-icons left">info</i>About</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'users:register' %}"><i class="material-icons left">card_membership</i>Register</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <div class="container">
+            <div class="register_msg">
+                <div style="margin-right:10px;">
+                    <a href="{% url 'users:register' %}" class="btn btn-floating deep-orange pulse"><i class="material-icons">card_membership</i></a>
+                </div>
+                <div>
+                    <a href="{% url 'users:register' %}">REGISTER</a> to get automatic food suggestions based on you and your friends' preferences!
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s12 m6">
+                    <h5>Search</h5>
+                    <div class="form">
+                        <form id="form_search">
+                            {% csrf_token %}
+                            <div class="input-field">
+                                <input type="text" name="term" id="search_term" class="validate">
+                                <label for="search_term">FOOD</label>
+                            </div>
+
+                            <div class="input-field">
+                                <input type="text" name="location" id="search_location" class="validate">
+                                <label for="search_location">LOCATION</label>
+                            </div>
+
+                            <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Search
+                                <i class="material-icons right">search</i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col s12 m6">
+                    <h5>Login</h5>
+                    <form id="form_login">
+                        {% csrf_token %}
+                        <div class="input-field">
+                            <input type="email" name="email" id="email" class="validate">
+                            <label for="email">EMAIL</label>
+                        </div>
+
+                        <div class="input-field">
+                            <input type="password" name="password" id="password" class="validate">
+                            <label for="search_location">PASSWORD</label>
+                        </div>
+
+                        <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Login
+                            <i class="material-icons right">account_box</i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="results">
+                <div class="progress deep-orange darken-3" style="display:none;">
+                    <div class="indeterminate deep-orange lighten-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js"></script>
+        <script>
+            $(".button-collapse").sideNav();
+
+            $('#form_search').submit(function(e) {
+                e.preventDefault();
+                $('.progress').fadeIn('slow');
+                $.ajax({
+                    url: '/query_api',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(res) {
+                        $('.results').html(res);
+                        $('.results').prepend(
+                            '<div class="progress deep-orange darken-3" style="display:none;"><div class="indeterminate deep-orange lighten-2"></div></div>'
+                        ); 
+                    }
+                });
+            });
+
+            $(document).on('click', '.card-image', function(e) {
+                e.preventDefault();
+                var card = $(this).parent();
+                var business_id = card.attr('business_id');
+                if ($('#' + business_id).length === 0) {
+                    $.ajax({
+                        url: '/query_business/' + business_id,
+                        method: 'GET',
+                        success: function(res) {
+                            $(card).after(res);
+                            $(card).next().hide();
+                            $(card).next().slideDown(1000);
+                        }
+                    });
+                }
+            });
+
+            $(document).on('click', '.card-content .name_link', function(e) {
+                e.preventDefault();
+                var card = $(this).parent().parent().parent();
+                var business_id = card.attr('business_id');
+                if ($('#' + business_id).length === 0) {
+                    $.ajax({
+                        url: '/query_business/' + business_id,
+                        method: 'GET',
+                        success: function(res) {
+                            $(card).after(res);
+                            $(card).next().hide();
+                            $(card).next().slideDown(1000);
+                        }
+                    });
+                }
+            });
+
+            $(document).on('click', '.business_photos a', function(e) {
+                e.preventDefault();
+                var business_photos = $(this).parent().parent();
+                $(business_photos).slideUp('slow');
+                setTimeout(function() {
+                    $(business_photos).remove();
+                }, 1000);
+            });
+        </script>
+    </body>
+</html>
