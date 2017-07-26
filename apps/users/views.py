@@ -59,6 +59,30 @@ def process_signup(request):
     else:
         return redirect(reverse('users:signup'))
 
+def login(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        pw = request.POST['password']
+        request.session['login_email'] = email
+
+        # FORM VALIDATION
+        if len(email) < 1 or len(pw) < 1:
+            messages.error(request, 'Email and/or password fields cannot be blank!')
+            return redirect(reverse('search:index'))
+        
+        # USER LOGIN
+        users = User.objects.filter(email=email)
+        for user in users:
+            if bcrypt.checkpw(pw.encode(), user.pw.encode()):
+                request.session['login_email'] = ''
+                request.session['loggedin_id'] = user.id
+                request.session['name'] = user.first_name
+                return redirect(reverse('users:index'))
+        messages.error(request, 'Wrong email/password combination!')
+        return redirect(reverse('search:index'))
+    else:
+        return redirect(reverse('users:signup'))
+
 def logout(request):
     if 'loggedin_id' not in request.session:
         return redirect(reverse('search:index'))

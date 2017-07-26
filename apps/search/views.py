@@ -12,6 +12,7 @@ import requests
 import math
 
 from .models import Credential
+from ..users.models import *
 
 CREDENTIAL = Credential.objects.get(id=1)
 
@@ -22,11 +23,18 @@ TOKEN_PATH = '/oauth2/token'
 SEARCH_LIMIT = 10
 
 def index(request):
+    if 'term' not in request.session:
+        request.session['term'] = ''
+    if 'location' not in request.session:
+        request.session['location'] = ''
     return render(request, 'search/index.html')
 
 def query_api(request):
     term = request.POST['term']
+    request.session['term'] = term
     location = request.POST['location']
+    request.session['location'] = location
+
     bearer_token = get_bearer_token(API_HOST, TOKEN_PATH)
     response = search(bearer_token, term, location)
     businesses = response.get('businesses')
