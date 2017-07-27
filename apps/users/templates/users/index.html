@@ -93,6 +93,9 @@
                         <li>
                             <a href=""><i class="material-icons left">info</i>About</a>
                         </li>
+                        <li class="active">
+                            <a href="{% url 'users:index' %}"><i class="material-icons left">dashboard</i>Dashboard</a>
+                        </li>
                         <li>
                             <a href="{% url 'users:logout' %}"><i class="material-icons left">exit_to_app</i>Log Out</a>
                         </li>
@@ -100,6 +103,9 @@
                     <ul class="side-nav" id="mobile-demo">
                         <li>
                             <a href=""><i class="material-icons left">info</i>About</a>
+                        </li>
+                        <li class="active">
+                            <a href="{% url 'users:index' %}"><i class="material-icons left">dashboard</i>Dashboard</a>
                         </li>
                         <li>
                             <a href="{% url 'users:logout' %}"><i class="material-icons left">exit_to_app</i>Log Out</a>
