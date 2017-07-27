@@ -93,9 +93,6 @@
                     </a>
                     <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                     <ul class="right hide-on-med-and-down">
-                        <li>
-                            <a href=""><i class="material-icons left">info</i>About</a>
-                        </li>
                         {% if request.session.loggedin_id %}
                         <li>
                             <a href="{% url 'users:index' %}"><i class="material-icons left">dashboard</i>Dashboard</a>
@@ -110,9 +107,6 @@
                         {% endif %}
                     </ul>
                     <ul class="side-nav" id="mobile-demo">
-                        <li>
-                            <a href=""><i class="material-icons left">info</i>About</a>
-                        </li>
                         {% if request.session.loggedin_id %}
                         <li>
                             <a href="{% url 'users:index' %}"><i class="material-icons left">dashboard</i>Dashboard</a>

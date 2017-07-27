@@ -61,26 +61,12 @@
                 width: 100%;
             }
 
-            @media all and (max-width: 550px) {
-                .navbar-fixed {
-                    height: 70px;
-                }
-            }
-
-            @media all and (max-width: 830px) {
-                .card {
-                    width: 100%;
-                }
-                .column {
-                    width: 100%;
-                }
-            }
-
             /* SPECIFIC TO USERS HOMEPAGE */
             .columns {
                 display: flex;
                 justify-content: space-between;
                 margin-bottom: 20px;
+                flex-wrap: wrap;
             }
 
             .column {
@@ -94,13 +80,23 @@
             }
 
             .module_friends {
-                max-height: 300px;
-                overflow-y: scroll;
-                margin-bottom: 20px;
+                max-height: 380px;
             }
 
             #suggest_food {
-                margin-bottom: 30px;
+                margin-bottom: 20px;
+            }
+
+            @media all and (max-width: 550px) {
+                .navbar-fixed {
+                    height: 70px;
+                }
+            }
+
+            @media all and (max-width: 830px) {
+                .card, .column {
+                    width: 100%;
+                }
             }
         </style> 
     </head>
@@ -117,9 +113,6 @@
                     </a>
                     <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                     <ul class="right hide-on-med-and-down">
-                        <li>
-                            <a href=""><i class="material-icons left">info</i>About</a>
-                        </li>
                         <li class="active">
                             <a href="{% url 'users:index' %}"><i class="material-icons left">dashboard</i>Dashboard</a>
                         </li>
@@ -128,9 +121,6 @@
                         </li>
                     </ul>
                     <ul class="side-nav" id="mobile-demo">
-                        <li>
-                            <a href=""><i class="material-icons left">info</i>About</a>
-                        </li>
                         <li class="active">
                             <a href="{% url 'users:index' %}"><i class="material-icons left">dashboard</i>Dashboard</a>
                         </li>
@@ -176,14 +166,12 @@
                             {% if friends %}
                             <table>
                                 <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
+                                    <th>Name</th>
                                     <th style="text-align:center;">Add to Group</th>
                                 </tr>
                                 {% for friend in friends %}
                                 <tr>
-                                    <td>{{ friend.first_name }}</td>
-                                    <td>{{ friend.last_name }}</td>
+                                    <td>{{ friend.first_name }} {{ friend.last_name }}</td>
                                     <td style="text-align:center;">
                                         <form>
                                             {% csrf_token %}
@@ -207,14 +195,12 @@
                             {% if members %}
                             <table>
                                 <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
+                                    <th>Name</th>
                                     <th style="text-align:center;">Remove from Group</th>
                                 </tr>
                                 {% for member in members %}
                                 <tr>
-                                    <td>{{ member.first_name }}</td>
-                                    <td>{{ member.last_name }}</td>
+                                    <td>{{ member.first_name }} {{ member.last_name }}</td>
                                     <td style="text-align:center;">
                                         <form>
                                             {% csrf_token %}
@@ -236,6 +222,7 @@
                             </button>
                             <br>
                         </div>
+                        <!-- <div id="more_suggestions"></div> -->
                         <form id="form_search">
                             {% csrf_token %}
                             <div class="input-field">
@@ -367,34 +354,53 @@
 
             $(document).on('click', '.add_group_btn', function(e) {
                 e.preventDefault();
+                var btn = $(this);
                 $.ajax({
-                    url: '/users/add_friend2group/' + $(this).attr('friend_id') + '/',
+                    url: '/users/add_friend2group/' + btn.attr('friend_id') + '/',
                     method: 'POST',
-                    data: $(this).parent().serialize(),
+                    data: btn.parent().serialize(),
                     success: function(res) {
                         $('#current_group').html(res);
+                        $.ajax({
+                            url: '/users/display_friends',
+                            method: 'POST',
+                            data: btn.parent().serialize(),
+                            success: function(res) {
+                                $('#all_friends').html(res);
+                            }
+                        });
                     }
                 });
             });
 
             $(document).on('click', '.remove_friend_btn', function(e) {
                 e.preventDefault();
+                var btn = $(this);
                 $.ajax({
-                    url: '/users/remove_friend_from_group/' + $(this).attr('friend_id') + '/',
+                    url: '/users/remove_friend_from_group/' + btn.attr('friend_id') + '/',
                     method: 'POST',
-                    data: $(this).parent().serialize(),
+                    data: btn.parent().serialize(),
                     success: function(res) {
                         $('#current_group').html(res);
+                        $.ajax({
+                            url: '/users/display_friends',
+                            method: 'POST',
+                            data: btn.parent().serialize(),
+                            success: function(res) {
+                                $('#all_friends').html(res);
+                            }
+                        });
                     }
                 });
             });
 
             $(document).on('click', '#form_suggest_btn', function(e) {
+                $('#more_suggestions').remove();
                 $.ajax({
                     url: '/users/suggest_food',
                     success: function(res) {
                         $('#search_term').val(res[0]).focus();
-                        otherSuggestionsHTML = "<div><p>";
+                        otherSuggestionsHTML = "<div id='more_suggestions'><p>";
                         otherSuggestionsHTML += "Other suggestions: ";
                         otherSuggestionsHTML += "<a href='/search' class='more_suggestions_btn'>";
                         otherSuggestionsHTML += res[1] + "</a>, ";

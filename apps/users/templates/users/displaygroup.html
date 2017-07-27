@@ -1,14 +1,12 @@
 {% if members %}
 <table>
     <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
+        <th>Name</th>
         <th style="text-align:center;">Remove from Group</th>
     </tr>
     {% for member in members %}
     <tr>
-        <td>{{ member.first_name }}</td>
-        <td>{{ member.last_name }}</td>
+        <td>{{ member.first_name }} {{ member.last_name }}</td>
         <td style="text-align:center;">
             <form>
                 {% csrf_token %}

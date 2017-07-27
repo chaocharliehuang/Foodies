@@ -12,11 +12,14 @@ def index(request):
     if 'loggedin_id' not in request.session:
         messages.error(request, 'Must be logged in to view')
         return redirect(reverse('users:signup'))
-    user = User.objects.get(id=request.session['loggedin_id'])
+    current_user = User.objects.get(id=request.session['loggedin_id'])
+    all_friends = current_user.friends.all()
+    current_group = current_user.current_group.all().values('id')
+    friends = all_friends.exclude(id__in=current_group).order_by("last_name")
     context = {
-        'friends': user.friends.all().order_by("last_name"),
-        'members': user.current_group.all().exclude(id=user.id).order_by("last_name"),
-        'zipcode': user.zipcode
+        'friends': friends,
+        'members': current_user.current_group.all().exclude(id=current_user.id).order_by("last_name"),
+        'zipcode': current_user.zipcode
     }
     return render(request, 'users/index.html', context)
 
@@ -109,7 +112,21 @@ def add_friend(request, id):
     if request.method == 'POST':
         current_user = User.objects.get(id=request.session['loggedin_id'])
         current_user.friends.add(User.objects.get(id=id))
-        return render(request, 'users/displayfriends.html', {'friends': current_user.friends.all().order_by("last_name")})
+        all_friends = current_user.friends.all()
+        current_group = current_user.current_group.all().values('id')
+        friends = all_friends.exclude(id__in=current_group).order_by("last_name")
+        return render(request, 'users/displayfriends.html', {'friends': friends})
+    else:
+        return redirect(reverse('users:index'))
+
+def display_friends(request):
+    if request.method == 'POST':
+        current_user = User.objects.get(id=request.session['loggedin_id'])
+        all_friends = current_user.friends.all()
+        current_group = current_user.current_group.all().values('id')
+        print current_group
+        friends = all_friends.exclude(id__in=current_group).order_by("last_name")
+        return render(request, 'users/displayfriends.html', {'friends': friends})
     else:
         return redirect(reverse('users:index'))
 
