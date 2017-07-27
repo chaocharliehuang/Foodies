@@ -1,0 +1,22 @@
+{% if members %}
+<table>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Remove from Group</th>
+    </tr>
+    {% for member in members %}
+    <tr>
+        <td>{{ member.first_name }}</td>
+        <td>{{ member.last_name }}</td>
+        <td>
+            <form>
+                {% csrf_token %}
+                <a class="btn-floating btn small waves-effect waves-light deep-orange darken-2 remove_friend_btn" friend_id={{ member.id }}><i class="material-icons">remove_circle_outline</i>
+                </a>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}

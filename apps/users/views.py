@@ -11,7 +11,9 @@ def index(request):
         messages.error(request, 'Must be logged in to view')
         return redirect(reverse('users:signup'))
     user = User.objects.get(id=request.session['loggedin_id'])
-    return render(request, 'users/index.html', {'friends': user.friends.all().order_by("last_name")})
+    friends = user.friends.all().order_by("last_name")
+    members = user.current_group.all().exclude(id=user.id).order_by("last_name")
+    return render(request, 'users/index.html', {'friends': friends, 'members': members})
 
 def signup(request):
     if 'loggedin_id' in request.session:
@@ -45,6 +47,7 @@ def process_signup(request):
         # ADD USER TO DATABASE
         pw_hashed = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
         new_user = User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email=request.POST['email'], zipcode=request.POST['zipcode'], pw=pw_hashed)
+        new_user.current_group.add(new_user)
         for food_id in request.POST.getlist('fav_food'):
             new_user.fav_foods.add(FoodCategory.objects.get(id=food_id))
 
@@ -90,18 +93,36 @@ def logout(request):
     return redirect(reverse('search:index'))
 
 def find_friend(request):
-    current_user = User.objects.get(id=request.session['loggedin_id'])
-    users = User.objects.filter(first_name__startswith=request.POST['find_friend_name']).exclude(id=current_user.id).exclude(friends__id=current_user.id).order_by("last_name")
-    return render(request, 'users/findfriend.html', {'users': users})
+    if request.method == 'POST':
+        current_user = User.objects.get(id=request.session['loggedin_id'])
+        users = User.objects.filter(first_name__startswith=request.POST['find_friend_name']).exclude(id=current_user.id).exclude(friends__id=current_user.id).order_by("last_name")
+        return render(request, 'users/findfriend.html', {'users': users})
+    else:
+        return redirect(reverse('users:index'))
 
 def add_friend(request, id):
     if request.method == 'POST':
         current_user = User.objects.get(id=request.session['loggedin_id'])
-        new_friend = User.objects.get(id=id)
-        current_user.friends.add(new_friend)
+        current_user.friends.add(User.objects.get(id=id))
         return render(request, 'users/displayfriends.html', {'friends': current_user.friends.all().order_by("last_name")})
     else:
         return redirect(reverse('users:index'))
 
-def display_current_group(request):
-    pass
+def add_friend2group(request, id):
+    if request.method == 'POST':
+        current_user = User.objects.get(id=request.session['loggedin_id'])
+        current_user.current_group.add(User.objects.get(id=id))
+        members = current_user.current_group.all().exclude(id=current_user.id).order_by("last_name")
+        return render(request, 'users/displaygroup.html', {'members': members})
+    else:
+        return redirect(reverse('users:index'))
+
+def remove_friend_from_group(request, id):
+    if request.method == 'POST':
+        current_user = User.objects.get(id=request.session['loggedin_id'])
+        friend = User.objects.get(id=id)
+        current_user.current_group.remove(friend)
+        members = current_user.current_group.all().exclude(id=current_user.id).order_by("last_name")
+        return render(request, 'users/displaygroup.html', {'members': members})
+    else:
+        return redirect(reverse('users:index'))

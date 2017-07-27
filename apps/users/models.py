@@ -51,6 +51,7 @@ class User(models.Model):
     zipcode = models.CharField(max_length=5)
     pw = models.CharField(max_length=255)
     friends = models.ManyToManyField('self', default=None)
+    current_group = models.ManyToManyField('self', default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = UserManager()

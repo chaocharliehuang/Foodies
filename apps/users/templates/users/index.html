@@ -150,8 +150,7 @@
                                 <td>
                                     <form>
                                         {% csrf_token %}
-                                        <a class="btn-floating btn small waves-effect waves-light deep-orange darken-2 add_group_btn" friend_id={{ user.id }}>
-                                            <i class="material-icons">people</i>
+                                        <a class="btn-floating btn small waves-effect waves-light deep-orange darken-2 add_group_btn" friend_id={{ friend.id }}><i class="material-icons">people</i>
                                         </a>
                                     </form>
                                 </td>
@@ -164,6 +163,30 @@
 
                 <div class="col s12 m4 module">
                     <h5>Current Group:</h5>
+                    <div id="current_group">
+                        {% if members %}
+                        <table>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Remove from Group</th>
+                            </tr>
+                            {% for member in members %}
+                            <tr>
+                                <td>{{ member.first_name }}</td>
+                                <td>{{ member.last_name }}</td>
+                                <td>
+                                    <form>
+                                        {% csrf_token %}
+                                        <a class="btn-floating btn small waves-effect waves-light deep-orange darken-2 remove_friend_btn" friend_id={{ member.id }}><i class="material-icons">remove_circle_outline</i>
+                                        </a>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
 
@@ -190,7 +213,7 @@
                 });
             });
 
-            $(document).on('click', '.add_friend_btn', function(e) {
+            $(document).on('click', '.remove_friend_btn', function(e) {
                 e.preventDefault();
                 $.ajax({
                     url: '/users/add_friend/' + $(this).attr('friend_id') + '/',
@@ -198,6 +221,30 @@
                     data: $(this).parent().serialize(),
                     success: function(res) {
                         $('#all_friends').html(res);
+                    }
+                });
+            });
+
+            $(document).on('click', '.add_group_btn', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/users/add_friend2group/' + $(this).attr('friend_id') + '/',
+                    method: 'POST',
+                    data: $(this).parent().serialize(),
+                    success: function(res) {
+                        $('#current_group').html(res);
+                    }
+                });
+            });
+
+            $(document).on('click', '.remove_friend_btn', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/users/remove_friend_from_group/' + $(this).attr('friend_id') + '/',
+                    method: 'POST',
+                    data: $(this).parent().serialize(),
+                    success: function(res) {
+                        $('#current_group').html(res);
                     }
                 });
             });
