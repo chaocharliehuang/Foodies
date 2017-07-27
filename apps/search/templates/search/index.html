@@ -47,6 +47,10 @@
                 box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;;
             }
 
+            /* .material-icons-prefix.active {
+                color: rgb(216, 67, 21) !important;
+            } */
+
             .results {
                 display: flex;
                 justify-content: space-between;
@@ -160,11 +164,13 @@
                         <form id="form_search">
                             {% csrf_token %}
                             <div class="input-field">
+                                <i class="material-icons prefix">account_circle</i>
                                 <input type="text" name="term" id="search_term" class="validate" value="{{ request.session.term }}">
                                 <label for="search_term">FOOD</label>
                             </div>
 
                             <div class="input-field">
+                                <i class="material-icons prefix">account_circle</i>
                                 <input type="text" name="location" id="search_location" class="validate" value="{{ request.session.location }}">
                                 <label for="search_location">LOCATION</label>
                             </div>
@@ -182,11 +188,13 @@
                     <form action="{% url 'users:login' %}" method="POST">
                         {% csrf_token %}
                         <div class="input-field">
+                            <i class="material-icons prefix">account_circle</i>
                             <input type="email" name="email" id="email" class="validate" value="{{ request.session.login_email }}">
                             <label for="email">EMAIL</label>
                         </div>
 
                         <div class="input-field">
+                            <i class="material-icons prefix">account_circle</i>
                             <input type="password" name="password" id="password" class="validate">
                             <label for="search_location">PASSWORD</label>
                         </div>

@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import messages
 from django.core.urlresolvers import reverse
+from django.core import serializers
 
 import bcrypt
+import json
 
 from .models import *
 
@@ -129,3 +131,24 @@ def remove_friend_from_group(request, id):
         return render(request, 'users/displaygroup.html', {'members': members})
     else:
         return redirect(reverse('users:index'))
+
+def suggest_food(request):
+    if 'loggedin_id' not in request.session:
+        messages.error(request, 'Must be logged in to view')
+        return redirect(reverse('users:signup'))
+    current_user = User.objects.get(id=request.session['loggedin_id'])
+    group = current_user.current_group.all()
+    foods = {}
+    for user in group:
+        fav_foods = user.fav_foods.all()
+        for food in fav_foods:
+            if food.id in foods:
+                foods[food.id] += 1
+            else:
+                foods[food.id] = 1
+    food_suggestions = []
+    for i in range(3):
+        suggestion_id = max(foods, key=foods.get)
+        food_suggestions.append(FoodCategory.objects.get(id=suggestion_id).category)
+        del foods[suggestion_id]
+    return HttpResponse(json.dumps(food_suggestions), content_type='application/json')
