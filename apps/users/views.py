@@ -11,11 +11,11 @@ def index(request):
         messages.error(request, 'Must be logged in to view')
         return redirect(reverse('users:signup'))
     user = User.objects.get(id=request.session['loggedin_id'])
-    return render(request, 'users/index.html', {'fav_foods': user.fav_foods.all()})
+    return render(request, 'users/index.html', {'friends': user.friends.all().order_by("last_name")})
 
 def signup(request):
     if 'loggedin_id' in request.session:
-        messages.error(request, 'You are already signed up! Logout first to be able to sign up for a new account.')
+        messages.error(request, 'You are already signed up! Log out first to be able to sign up for a new account.')
         return redirect(reverse('users:index'))
     if 'first_name' not in request.session:
         request.session['first_name'] = ''
@@ -88,3 +88,20 @@ def logout(request):
         return redirect(reverse('search:index'))
     request.session.flush()
     return redirect(reverse('search:index'))
+
+def find_friend(request):
+    current_user = User.objects.get(id=request.session['loggedin_id'])
+    users = User.objects.filter(first_name__startswith=request.POST['find_friend_name']).exclude(id=current_user.id).exclude(friends__id=current_user.id).order_by("last_name")
+    return render(request, 'users/findfriend.html', {'users': users})
+
+def add_friend(request, id):
+    if request.method == 'POST':
+        current_user = User.objects.get(id=request.session['loggedin_id'])
+        new_friend = User.objects.get(id=id)
+        current_user.friends.add(new_friend)
+        return render(request, 'users/displayfriends.html', {'friends': current_user.friends.all().order_by("last_name")})
+    else:
+        return redirect(reverse('users:index'))
+
+def display_current_group(request):
+    pass

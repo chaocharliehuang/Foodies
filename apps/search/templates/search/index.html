@@ -126,7 +126,7 @@
 
             <div class="row">
                 <div class="col s12 m6">
-                    <h5>Search</h5>
+                    <h5>Search:</h5>
                     <div class="form">
                         <form id="form_search">
                             {% csrf_token %}
@@ -148,7 +148,7 @@
                 </div>
 
                 <div class="col s12 m6">
-                    <h5>Login</h5>
+                    <h5>Log In:</h5>
                     <form action="{% url 'users:login' %}" method="POST">
                         {% csrf_token %}
                         <div class="input-field">
@@ -161,7 +161,7 @@
                             <label for="search_location">PASSWORD</label>
                         </div>
 
-                        <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Login
+                        <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Log In
                             <i class="material-icons right">account_box</i>
                         </button>
                     </form>

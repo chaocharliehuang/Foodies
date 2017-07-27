@@ -1,21 +1,206 @@
-{% if messages %}
-<div style="color:red;">
-    <h5>ERRORS:</h5>
-    <ul>
-        {% for message in messages %}
-        <li>- {{message}}</li>
-        {% endfor %}
-    </ul>
-</div>
-{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Foodies</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
+        <!-- {% load static %}
+         <link rel="stylesheet" href="{% static 'search/css/nav_form_results.css' %}">  -->
+         <style>
+            .navbar-fixed {
+                height: 80px;
+            }
 
-<h1>Welcome, {{ request.session.name }}!</h1>
+            .navbar-fixed {
+                z-index: 999;
+            }
 
-<a href="{% url 'users:logout' %}">Logout</a>
+            .signup_msg {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
 
-<h1>Favorite foods:</h1>
-<ul>
-{% for food in fav_foods %}
-<li>{{ food.category }}</li>
-{% endfor %}
-</ul>
+            /* label color */
+            .input-field label {
+                color: rgb(216, 67, 21);
+            }
+            /* label focus color */
+            .input-field input:focus + label {
+                color: rgb(216, 67, 21) !important;
+            }
+            /*  label underline focus color */
+            .input-field input:focus {
+                border-bottom: 1px solid rgb(216, 67, 21) !important;
+                box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;
+            }
+            /* valid color */
+            .input-field input.valid {
+                border-bottom: 1px solid rgb(216, 67, 21) !important;
+                box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;
+            }
+            /* invalid color */
+            .input-field input.invalid {
+                border-bottom: 1px solid rgb(216, 67, 21) !important;;
+                box-shadow: 0 1px 0 0 rgb(216, 67, 21) !important;;
+            }
+
+            .results {
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+
+            .card {
+                width: 49%;
+            }
+
+            .business_photos {
+                width: 100%;
+            }
+
+            @media all and (max-width: 550px) {
+                .navbar-fixed {
+                    height: 70px;
+                }
+            }
+
+            @media all and (max-width: 830px) {
+                .card {
+                    width: 100%;
+                }
+            }
+
+            /* SPECIFIC TO USERS HOMEPAGE */
+
+        </style> 
+    </head>
+    <body>
+        <div class="navbar-fixed">
+            <nav>
+                <div class="nav-wrapper deep-orange darken-2">
+                    <ul class="left">
+                        <li>&emsp;Hello, {{ request.session.name }}!</li>
+                    </ul>
+                    <a href="/" class="brand-logo center">
+                        <i class="material-icons">restaurant</i>Foodies
+                        <i class="material-icons right">restaurant</i>
+                    </a>
+                    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+                    <ul class="right hide-on-med-and-down">
+                        <li>
+                            <a href=""><i class="material-icons left">info</i>About</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'users:logout' %}"><i class="material-icons left">exit_to_app</i>Log Out</a>
+                        </li>
+                    </ul>
+                    <ul class="side-nav" id="mobile-demo">
+                        <li>
+                            <a href=""><i class="material-icons left">info</i>About</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'users:logout' %}"><i class="material-icons left">exit_to_app</i>Log Out</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <div class="container">
+            {% if messages %}
+            <div style="color:red; text-align:center;">
+                <h5>ERRORS:</h5>
+                <ul>
+                    {% for message in messages %}
+                    <li>- {{message}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col s12 m4 module">
+                    <h5>Search:</h5>
+                    <form>
+                        {% csrf_token %}
+                        <div class="input-field">
+                            <input type="text" name="find_friend_name" id="input_find_friend" class="validate">
+                            <label for="find_friend">FIND A FRIEND</label>
+                        </div>
+                    </form>
+                    <div id="find_friend_results"></div>
+                </div>
+
+                <div class="col s12 m4 module">
+                    <h5>Friends:</h5>
+                    <div id="all_friends">
+                        {% if friends %}
+                        <table>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Add to Group</th>
+                            </tr>
+                            {% for friend in friends %}
+                            <tr>
+                                <td>{{ friend.first_name }}</td>
+                                <td>{{ friend.last_name }}</td>
+                                <td>
+                                    <form>
+                                        {% csrf_token %}
+                                        <a class="btn-floating btn small waves-effect waves-light deep-orange darken-2 add_group_btn" friend_id={{ user.id }}>
+                                            <i class="material-icons">people</i>
+                                        </a>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col s12 m4 module">
+                    <h5>Current Group:</h5>
+                </div>
+            </div>
+
+            <!-- rest of page  -->
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js"></script>
+        <script>
+            $(".button-collapse").sideNav();
+
+            $('#input_find_friend').keyup(function() {
+                if (!$('#input_find_friend').val()) {
+                    $('#find_friend_results').html('');
+                    return;
+                }
+                $.ajax({
+                    url: '/users/find_friend',
+                    method: 'POST',
+                    data: $(this).parent().parent().serialize(),
+                    success: function(res) {
+                        $('#find_friend_results').html(res);
+                    }
+                });
+            });
+
+            $(document).on('click', '.add_friend_btn', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/users/add_friend/' + $(this).attr('friend_id') + '/',
+                    method: 'POST',
+                    data: $(this).parent().serialize(),
+                    success: function(res) {
+                        $('#all_friends').html(res);
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
