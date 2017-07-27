@@ -71,12 +71,16 @@
                 .card {
                     width: 100%;
                 }
+                .column {
+                    width: 100%;
+                }
             }
 
             /* SPECIFIC TO USERS HOMEPAGE */
             .columns {
                 display: flex;
                 justify-content: space-between;
+                margin-bottom: 20px;
             }
 
             .column {
@@ -93,6 +97,10 @@
                 max-height: 300px;
                 overflow-y: scroll;
                 margin-bottom: 20px;
+            }
+
+            #suggest_food {
+                margin-bottom: 30px;
             }
         </style> 
     </head>
@@ -149,7 +157,7 @@
 
             <div class="columns">
 
-                <div class="col s12 m6 column">
+                <div class="column">
                     <div class="module">
                         <h5>Find Friends:</h5>
                         <form>
@@ -163,7 +171,7 @@
                     </div>
 
                     <div class="module module_friends">
-                        <h5>Friends:</h5>
+                        <h5>All Current Friends:</h5>
                         <div id="all_friends">
                             {% if friends %}
                             <table>
@@ -192,7 +200,7 @@
 
                 </div>
                 
-                <div class="col s12 m6 column">
+                <div class="column">
                     <div class="module">
                         <h5>Current Group:</h5>
                         <div id="current_group">
@@ -259,6 +267,76 @@
         <script>
             $(".button-collapse").sideNav();
 
+            $('#form_search').submit(function(e) {
+                e.preventDefault();
+                $('.progress').fadeIn('slow');
+                $.ajax({
+                    url: '/query_api',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(res) {
+                        $('.results').html(res);
+                        $('.results').prepend(
+                            '<div class="progress deep-orange darken-3" style="display:none;"><div class="indeterminate deep-orange lighten-2"></div></div>'
+                        ); 
+                    }
+                });
+
+                $('.columns').slideUp();
+                $('.results').before("<p style='text-align:center;' id='search_again_msg'><a href='/search' id='search_again'>Search for something different</a></p>");
+            });
+
+            $(document).on('click', '#search_again', function(e) {
+                e.preventDefault();
+                $('.columns').slideDown();
+                $('#search_again_msg').remove();
+            })
+
+            $(document).on('click', '.card-image', function(e) {
+                e.preventDefault();
+                var card = $(this).parent();
+                var business_id = card.attr('business_id');
+                if ($('#' + business_id).length === 0) {
+                    $.ajax({
+                        url: '/query_business/' + business_id,
+                        method: 'GET',
+                        success: function(res) {
+                            $(card).after(res);
+                            $(card).next().hide();
+                            $(card).next().slideDown(1000);
+                        }
+                    });
+                }
+            });
+
+            $(document).on('click', '.card-content .name_link', function(e) {
+                e.preventDefault();
+                var card = $(this).parent().parent().parent();
+                var business_id = card.attr('business_id');
+                if ($('#' + business_id).length === 0) {
+                    $.ajax({
+                        url: '/query_business/' + business_id,
+                        method: 'GET',
+                        success: function(res) {
+                            $(card).after(res);
+                            $(card).next().hide();
+                            $(card).next().slideDown(1000);
+                        }
+                    });
+                }
+            });
+
+            $(document).on('click', '.business_photos a', function(e) {
+                e.preventDefault();
+                var business_photos = $(this).parent().parent();
+                $(business_photos).slideUp('slow');
+                setTimeout(function() {
+                    $(business_photos).remove();
+                }, 1000);
+            });
+
+            // USER PAGE ONLY BELOW:
+
             $('#input_find_friend').keyup(function() {
                 if (!$('#input_find_friend').val()) {
                     $('#find_friend_results').html('');
@@ -318,14 +396,19 @@
                         $('#search_term').val(res[0]).focus();
                         otherSuggestionsHTML = "<div><p>";
                         otherSuggestionsHTML += "Other suggestions: ";
-                        otherSuggestionsHTML += "<a href='' class='more_suggestions_btn'>";
+                        otherSuggestionsHTML += "<a href='/search' class='more_suggestions_btn'>";
                         otherSuggestionsHTML += res[1] + "</a>, ";
-                        otherSuggestionsHTML += "<a href='' class='more_suggestions_btn'>";
+                        otherSuggestionsHTML += "<a href='/search' class='more_suggestions_btn'>";
                         otherSuggestionsHTML += res[2] + "</a>";
                         otherSuggestionsHTML += "</p></div>";
                         $('#suggest_food').after(otherSuggestionsHTML);
                     }
                 });
+            });
+
+            $(document).on('click', '.more_suggestions_btn', function(e) {
+                e.preventDefault();
+                $('#search_term').val($(this).text()).focus();
             });
         </script>
     </body>
