@@ -6,8 +6,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
-        <!-- {% load static %}
-         <link rel="stylesheet" href="{% static 'search/css/nav_form_results.css' %}">  -->
          <style>
             .navbar-fixed {
                 height: 80px;
@@ -62,6 +60,10 @@
             }
 
             /* SPECIFIC TO USERS HOMEPAGE */
+            table {
+                table-layout: fixed;
+            }
+
             .columns {
                 display: flex;
                 justify-content: space-between;
@@ -83,7 +85,7 @@
                 max-height: 380px;
             }
 
-            #suggest_food {
+            #suggest_food, #more_suggestions {
                 margin-bottom: 20px;
             }
 
