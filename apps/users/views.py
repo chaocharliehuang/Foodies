@@ -11,9 +11,12 @@ def index(request):
         messages.error(request, 'Must be logged in to view')
         return redirect(reverse('users:signup'))
     user = User.objects.get(id=request.session['loggedin_id'])
-    friends = user.friends.all().order_by("last_name")
-    members = user.current_group.all().exclude(id=user.id).order_by("last_name")
-    return render(request, 'users/index.html', {'friends': friends, 'members': members})
+    context = {
+        'friends': user.friends.all().order_by("last_name"),
+        'members': user.current_group.all().exclude(id=user.id).order_by("last_name"),
+        'zipcode': user.zipcode
+    }
+    return render(request, 'users/index.html', context)
 
 def signup(request):
     if 'loggedin_id' in request.session:

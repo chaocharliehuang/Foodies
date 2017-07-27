@@ -74,7 +74,26 @@
             }
 
             /* SPECIFIC TO USERS HOMEPAGE */
+            .columns {
+                display: flex;
+                justify-content: space-between;
+            }
 
+            .column {
+                width: 48%;
+            }
+
+            .module {
+                max-height: 300px;
+                overflow-y: scroll;
+                margin-bottom: 20px;
+            }
+
+            .module_friends {
+                max-height: 300px;
+                overflow-y: scroll;
+                margin-bottom: 20px;
+            }
         </style> 
     </head>
     <body>
@@ -126,77 +145,116 @@
                 </ul>
             </div>
             {% endif %}
-            <div class="row">
-                <div class="col s12 m4 module">
-                    <h5>Search:</h5>
-                    <form>
-                        {% csrf_token %}
-                        <div class="input-field">
-                            <input type="text" name="find_friend_name" id="input_find_friend" class="validate">
-                            <label for="find_friend">FIND A FRIEND</label>
+
+
+            <div class="columns">
+
+                <div class="col s12 m6 column">
+                    <div class="module">
+                        <h5>Search:</h5>
+                        <form>
+                            {% csrf_token %}
+                            <div class="input-field">
+                                <input type="text" name="find_friend_name" id="input_find_friend" class="validate">
+                                <label for="find_friend">FIND A FRIEND</label>
+                            </div>
+                        </form>
+                        <div id="find_friend_results"></div>
+                    </div>
+
+                    <div class="module module_friends">
+                        <h5>Friends:</h5>
+                        <div id="all_friends">
+                            {% if friends %}
+                            <table>
+                                <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th style="text-align:center;">Add to Group</th>
+                                </tr>
+                                {% for friend in friends %}
+                                <tr>
+                                    <td>{{ friend.first_name }}</td>
+                                    <td>{{ friend.last_name }}</td>
+                                    <td style="text-align:center;">
+                                        <form>
+                                            {% csrf_token %}
+                                            <a class="btn-floating btn small waves-effect waves-light deep-orange darken-2 add_group_btn" friend_id={{ friend.id }}><i class="material-icons">group_add</i>
+                                            </a>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                            {% endif %}
                         </div>
-                    </form>
-                    <div id="find_friend_results"></div>
-                </div>
+                    </div>
 
-                <div class="col s12 m4 module">
-                    <h5>Friends:</h5>
-                    <div id="all_friends">
-                        {% if friends %}
-                        <table>
-                            <tr>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Add to Group</th>
-                            </tr>
-                            {% for friend in friends %}
-                            <tr>
-                                <td>{{ friend.first_name }}</td>
-                                <td>{{ friend.last_name }}</td>
-                                <td>
-                                    <form>
-                                        {% csrf_token %}
-                                        <a class="btn-floating btn small waves-effect waves-light deep-orange darken-2 add_group_btn" friend_id={{ friend.id }}><i class="material-icons">people</i>
-                                        </a>
-                                    </form>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                        {% endif %}
+                </div>
+                
+                <div class="col s12 m6 column">
+                    <div class="module">
+                        <h5>Current Group:</h5>
+                        <div id="current_group">
+                            {% if members %}
+                            <table>
+                                <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th style="text-align:center;">Remove from Group</th>
+                                </tr>
+                                {% for member in members %}
+                                <tr>
+                                    <td>{{ member.first_name }}</td>
+                                    <td>{{ member.last_name }}</td>
+                                    <td style="text-align:center;">
+                                        <form>
+                                            {% csrf_token %}
+                                            <a class="btn-floating btn small waves-effect waves-light deep-orange darken-2 remove_friend_btn" friend_id={{ member.id }}><i class="material-icons">remove_circle_outline</i>
+                                            </a>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div>
+                            <form id="form_suggest">
+                                {% csrf_token %}
+                                <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Suggest food
+                                    <i class="material-icons right">help_outline</i>
+                                </button>
+                                <br><br>
+                            </form>
+                        </div>
+                        <form id="form_search">
+                            {% csrf_token %}
+                            <div class="input-field">
+                                <input type="text" name="term" id="search_term" class="validate" value="{{ request.session.term }}">
+                                <label for="search_term">FOOD</label>
+                            </div>
+                            <div class="input-field">
+                                <input type="text" name="location" id="search_location" class="validate" value="{{ zipcode }}">
+                                <label for="search_location">LOCATION</label>
+                            </div>
+                            <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Search
+                                <i class="material-icons right">search</i>
+                            </button>
+                        </form>
                     </div>
                 </div>
 
-                <div class="col s12 m4 module">
-                    <h5>Current Group:</h5>
-                    <div id="current_group">
-                        {% if members %}
-                        <table>
-                            <tr>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Remove from Group</th>
-                            </tr>
-                            {% for member in members %}
-                            <tr>
-                                <td>{{ member.first_name }}</td>
-                                <td>{{ member.last_name }}</td>
-                                <td>
-                                    <form>
-                                        {% csrf_token %}
-                                        <a class="btn-floating btn small waves-effect waves-light deep-orange darken-2 remove_friend_btn" friend_id={{ member.id }}><i class="material-icons">remove_circle_outline</i>
-                                        </a>
-                                    </form>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                        {% endif %}
-                    </div>
-                </div>
             </div>
 
-            <!-- rest of page  -->
+            <div class="results">
+                <div class="progress deep-orange darken-3" style="display:none;">
+                    <div class="indeterminate deep-orange lighten-2"></div>
+                </div>
+            </div>
         </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -219,7 +277,7 @@
                 });
             });
 
-            $(document).on('click', '.remove_friend_btn', function(e) {
+            $(document).on('click', '.add_friend_btn', function(e) {
                 e.preventDefault();
                 $.ajax({
                     url: '/users/add_friend/' + $(this).attr('friend_id') + '/',
@@ -227,6 +285,7 @@
                     data: $(this).parent().serialize(),
                     success: function(res) {
                         $('#all_friends').html(res);
+                        $('#find_friend_results').html('');
                     }
                 });
             });
