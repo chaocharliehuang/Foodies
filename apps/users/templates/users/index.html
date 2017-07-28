@@ -142,12 +142,18 @@
                             <a href="{% url 'users:index' %}"><i class="material-icons left">dashboard</i>Dashboard</a>
                         </li>
                         <li>
+                            <a href="{% url 'users:profile' %}"><i class="material-icons left">edit</i>Profile</a>
+                        </li>
+                        <li>
                             <a href="{% url 'users:logout' %}"><i class="material-icons left">exit_to_app</i>Log Out</a>
                         </li>
                     </ul>
                     <ul class="side-nav" id="mobile-demo">
                         <li class="active">
                             <a href="{% url 'users:index' %}"><i class="material-icons left">dashboard</i>Dashboard</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'users:profile' %}"><i class="material-icons left">edit</i>Profile</a>
                         </li>
                         <li>
                             <a href="{% url 'users:logout' %}"><i class="material-icons left">exit_to_app</i>Log Out</a>
