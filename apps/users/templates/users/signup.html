@@ -355,7 +355,7 @@
 
         <footer class="page_footer deep-orange darken-2">
             <div class="center">
-                <p>&copy; 2017 <a href="http://github.com/chaocharliehuang" target="_blank">Chao Charlie Huang</a> | Built using Django and Yelp Fusion API</p>
+                <p>&copy; 2017 <a href="http://github.com/chaocharliehuang" target="_blank">Chao Charlie Huang</a> | Built using Django, Materialize CSS, Yelp Fusion API</p>
             </div>
         </footer>
 
@@ -364,6 +364,11 @@
         <script>
             $(".button-collapse").sideNav();
             $('select').material_select();
+
+            {% for id in request.session.fav_food %}
+                var i = {{ id }};
+                $('.checkbox-orange')[i-1].checked = true;
+            {% endfor %}
         </script>
     </body>
 </html>

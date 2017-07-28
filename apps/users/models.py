@@ -20,6 +20,7 @@ class UserManager(models.Manager):
         request.session['last_name'] = last_name
         request.session['email'] = email
         request.session['zipcode'] = zipcode
+        request.session['fav_food'] = fav_food
 
         errors = {}
         if len(first_name) < 2 or len(last_name) < 2 or not first_name.isalpha() or not last_name.isalpha():

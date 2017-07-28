@@ -12,6 +12,7 @@ def index(request):
     if 'loggedin_id' not in request.session:
         messages.error(request, 'Must be logged in to view')
         return redirect(reverse('users:signup'))
+    request.session['term'] = ''
     current_user = User.objects.get(id=request.session['loggedin_id'])
     all_friends = current_user.friends.all()
     current_group = current_user.current_group.all().values('id')
@@ -63,6 +64,7 @@ def process_signup(request):
         request.session['email'] = ''
         request.session['zipcode'] = ''
         request.session['term'] = ''
+        request.session['fav_food'] = []
         request.session['loggedin_id'] = new_user.id
         request.session['name'] = request.POST['first_name']
         request.session['first_name'] = ''
