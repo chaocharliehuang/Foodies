@@ -113,7 +113,8 @@ def profile(request):
         fav_foods_ids.append(food.id)
     context = {
         'user': current_user,
-        'fav_foods_ids': fav_foods_ids
+        'fav_foods_ids': fav_foods_ids,
+        'friends': current_user.friends.all().order_by("last_name")
     }
     return render(request, 'users/profile.html', context)
 
@@ -144,6 +145,16 @@ def update_profile(request):
         return redirect(reverse('users:profile'))
     else:
         return redirect(reverse('users:index'))
+
+def unfriend(request, id):
+    if request.method == 'POST':
+        current_user = User.objects.get(id=request.session['loggedin_id'])
+        friend = User.objects.get(id=id)
+        current_user.friends.remove(friend)
+        friends = current_user.friends.all().order_by("last_name")
+        return render(request, 'users/profile_displayfriends.html', {'friends': friends})
+    else:
+        return redirect(reverse('users:profile'))
 
 def find_friend(request):
     if request.method == 'POST':

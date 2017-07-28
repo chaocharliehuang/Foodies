@@ -39,8 +39,8 @@ class UserManager(models.Manager):
         if pw != pw_confirm:
             errors['pw_confirm'] = 'Passwords don\'t match!'
         
-        if len(fav_food) < 1 or len(fav_food) > 5:
-            errors['fav_food'] = "You must pick at least one favorite food category and no more than five!"
+        if len(fav_food) < 2 or len(fav_food) > 5:
+            errors['fav_food'] = "You must pick at least two favorite food categories and no more than five!"
 
         return errors
 

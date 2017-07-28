@@ -1,0 +1,25 @@
+{% if friends %}
+<div style="width:40%; margin:0 auto;">
+    <br><br>
+    <h5>Edit Friends</h5>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th style="text-align:center;">Unfriend</th>
+        </tr>
+        {% for friend in friends %}
+        <tr>
+            <td>{{ friend.first_name }} {{ friend.last_name }}</td>
+            <td style="text-align:center;">
+                <form>
+                    {% csrf_token %}
+                    <a class="btn-floating btn small waves-effect waves-light deep-orange darken-2 unfriend_btn" friend_id={{ friend.id }}>
+                        <i class="material-icons">remove_circle_outline</i>
+                    </a>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}

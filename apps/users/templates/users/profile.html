@@ -152,6 +152,7 @@
             <div class="container center">
                 <div class="heading_msg">
                     <h5>Edit Profile</h5>
+                    <p style="color:red;"><i>* All fields are required *</i></p>
                     {% if messages %}
                     <div style="color:red;">
                         <h5>ERRORS:</h5>
@@ -359,10 +360,34 @@
                     </button>
                 </form>
 
-                <div>
-                    <br>
-                    <h5>Edit Friends</h5>
+                <div id='display_friends'>
+                    {% if friends %}
+                    <div style="width:40%; margin:0 auto;">
+                        <br><br>
+                        <h5>Edit Friends</h5>
+                        <table>
+                            <tr>
+                                <th>Name</th>
+                                <th style="text-align:center;">Unfriend</th>
+                            </tr>
+                            {% for friend in friends %}
+                            <tr>
+                                <td>{{ friend.first_name }} {{ friend.last_name }}</td>
+                                <td style="text-align:center;">
+                                    <form>
+                                        {% csrf_token %}
+                                        <a class="btn-floating btn small waves-effect waves-light deep-orange darken-2 unfriend_btn" friend_id={{ friend.id }}>
+                                            <i class="material-icons">remove_circle_outline</i>
+                                        </a>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    {% endif %}
                 </div>
+
             </div>
 
         </main>
@@ -383,6 +408,19 @@
                 var i = {{ id }};
                 $('.checkbox-orange')[i-1].checked = true;
             {% endfor %}
+
+            $(document).on('click', '.unfriend_btn', function(e) {
+                console.log('clicked');
+                e.preventDefault();
+                $.ajax({
+                    url: '/users/unfriend/' + $(this).attr('friend_id') + '/',
+                    method: 'POST',
+                    data: $(this).parent().serialize(),
+                    success: function(res) {
+                        $('#display_friends').html(res);
+                    }
+                });
+            });
         </script>
     </body>
 </html>

@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^logout$', views.logout, name='logout'),
     url(r'^profile$', views.profile, name='profile'),
     url(r'^update_profile$', views.update_profile, name='update_profile'),
+    url(r'^unfriend/(?P<id>[0-9]+)/$', views.unfriend, name='unfriend'),
     url(r'^find_friend$', views.find_friend, name='find_friend'),
     url(r'^add_friend/(?P<id>[0-9]+)/$', views.add_friend, name='add_friend'),
     url(r'^display_friends$', views.display_friends, name='display_friends'),
