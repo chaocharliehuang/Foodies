@@ -113,19 +113,34 @@
         <div class="navbar-fixed">
             <nav>
                 <div class="nav-wrapper deep-orange darken-2">
+                    <ul class="left">
+                        <li>&emsp;Hello, {{ request.session.name }}!</li>
+                    </ul>
                     <a href="/" class="brand-logo center">
                         <i class="material-icons">restaurant</i>Foodies
                         <i class="material-icons right">restaurant</i>
                     </a>
                     <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
                     <ul class="right hide-on-med-and-down">
+                        <li>
+                            <a href="{% url 'users:index' %}"><i class="material-icons left">dashboard</i>Dashboard</a>
+                        </li>
                         <li class="active">
-                            <a href="{% url 'users:signup' %}"><i class="material-icons left">card_membership</i>Sign Up</a>
+                            <a href="{% url 'users:profile' %}"><i class="material-icons left">edit</i>Profile</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'users:logout' %}"><i class="material-icons left">exit_to_app</i>Log Out</a>
                         </li>
                     </ul>
                     <ul class="side-nav" id="mobile-demo">
+                        <li>
+                            <a href="{% url 'users:index' %}"><i class="material-icons left">dashboard</i>Dashboard</a>
+                        </li>
                         <li class="active">
-                            <a href="{% url 'users:signup' %}"><i class="material-icons left">card_membership</i>Sign Up</a>
+                            <a href="{% url 'users:profile' %}"><i class="material-icons left">edit</i>Profile</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'users:logout' %}"><i class="material-icons left">exit_to_app</i>Log Out</a>
                         </li>
                     </ul>
                 </div>
@@ -136,11 +151,7 @@
 
             <div class="container center">
                 <div class="heading_msg">
-                    <h5>Sign Up</h5>
-                    <p>Never hear <i>"I don't know, what do <b>you</b> want to eat?"</i> ever again...
-                    <br>
-                    Get <b>automatic</b> food suggestions based on you and your friends' preferences!</p>
-                    <p style="color:red;"><i>* All fields are required *</i></p>
+                    <h5>Edit Profile</h5>
                     {% if messages %}
                     <div style="color:red;">
                         <h5>ERRORS:</h5>
@@ -153,20 +164,20 @@
                     {% endif %}
                 </div>
 
-                <form id="form_signup" action="{% url 'users:process_signup' %}" method="POST">
+                <form id="form_editprofile" action="{% url 'users:update_profile' %}" method="POST">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col s12 m6">
                             <div class="input-field">
                                 <i class="material-icons prefix">account_circle</i>
-                                <input type="text" name="first_name" id="first_name" class="validate" value="{{ request.session.first_name }}">
+                                <input type="text" name="first_name" id="first_name" class="validate" value="{{ user.first_name }}">
                                 <label for="first_name">FIRST NAME</label>
                             </div>
                         </div>
                         <div class="col s12 m6">
                             <div class="input-field">
                                 <i class="material-icons prefix">account_circle</i>
-                                <input type="text" name="last_name" id="last_name" class="validate" value="{{ request.session.last_name }}">
+                                <input type="text" name="last_name" id="last_name" class="validate" value="{{ user.last_name }}">
                                 <label for="last_name">LAST NAME</label>
                             </div>
                         </div>
@@ -176,14 +187,14 @@
                         <div class="col s12 m6">
                             <div class="input-field">
                                 <i class="material-icons prefix">email</i>
-                                <input type="email" name="email" id="email" class="validate" value="{{ request.session.email }}">
+                                <input type="email" name="email" id="email" class="validate" value="{{ user.email }}">
                                 <label for="email">EMAIL</label>
                             </div>
                         </div>
                         <div class="col s12 m6">
                             <div class="input-field">
                                 <i class="material-icons prefix">location_on</i>
-                                <input type="text" name="zipcode" id="zipcode" class="validate" value="{{ request.session.zipcode }}">
+                                <input type="text" name="zipcode" id="zipcode" class="validate" value="{{ user.zipcode }}">
                                 <label for="zipcode">ZIP CODE</label>
                             </div>
                         </div>
@@ -206,8 +217,7 @@
                         </div>
                     </div>
 
-                    <p style="text-align:center;">Sometimes, having too many choices is a bad thing!
-                    <br>
+                    <p style="text-align:center;">
                     Pick up to only <b>FIVE (5)</b> of your favorite categories:</p>
 
                     <div class="row">
@@ -344,11 +354,15 @@
                         </div>
                     </div>
 
-                    <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Sign Up
-                        <i class="material-icons right">card_membership</i>
+                    <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Update Profile
+                        <i class="material-icons right">edit</i>
                     </button>
                 </form>
 
+                <div>
+                    <br>
+                    <h5>Edit Friends</h5>
+                </div>
             </div>
 
         </main>
@@ -364,6 +378,11 @@
         <script>
             $(".button-collapse").sideNav();
             $('select').material_select();
+
+            {% for id in fav_foods_ids %}
+                var i = {{ id }};
+                $('.checkbox-orange')[i-1].checked = true;
+            {% endfor %}
         </script>
     </body>
 </html>

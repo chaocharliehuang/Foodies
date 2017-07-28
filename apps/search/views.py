@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.core.paginator import Paginator
+from django.core import serializers
 
 from urllib2 import HTTPError
 from urllib import quote, urlencode
@@ -20,7 +21,7 @@ API_HOST = 'https://api.yelp.com'
 SEARCH_PATH = '/v3/businesses/search'
 BUSINESS_PATH = '/v3/businesses/'  # Business ID will come after slash.
 TOKEN_PATH = '/oauth2/token'
-SEARCH_LIMIT = 10
+SEARCH_LIMIT = 50
 
 def index(request):
     if 'term' not in request.session:
@@ -30,18 +31,24 @@ def index(request):
     return render(request, 'search/index.html')
 
 def query_api(request):
-    term = request.POST['term']
-    request.session['term'] = term
-    location = request.POST['location']
-    request.session['location'] = location
+    if request.method == 'POST':
+        term = request.POST['term']
+        request.session['term'] = term
+        location = request.POST['location']
+        request.session['location'] = location
 
-    bearer_token = get_bearer_token(API_HOST, TOKEN_PATH)
-    response = search(bearer_token, term, location)
-    businesses = response.get('businesses')
-    paginator = Paginator(businesses, 10)
-    # print 'Count:', paginator.count
-    # print 'Pages:', paginator.num_pages
-    return render(request, 'search/results.html', {'businesses': businesses})
+        bearer_token = get_bearer_token(API_HOST, TOKEN_PATH)
+        response = search(bearer_token, term, location)
+        businesses = response.get('businesses')
+        paginated_businesses = Paginator(businesses, 10)
+        return render(request, 'search/results.html', {'businesses': paginated_businesses.page(1)})
+    else:
+        bearer_token = get_bearer_token(API_HOST, TOKEN_PATH)
+        response = search(bearer_token, request.session['term'], request.session['location'])
+        businesses = response.get('businesses')
+        paginated_businesses = Paginator(businesses, 10)
+        page = int(request.GET.get('next_page'))
+        return render(request, 'search/results.html', {'businesses': paginated_businesses.page(page)})
 
 def query_business(request, id):
     business = get_business(id)

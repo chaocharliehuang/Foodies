@@ -6,9 +6,26 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
-        <!-- {% load static %}
-         <link rel="stylesheet" href="{% static 'search/css/nav_form_results.css' %}">  -->
          <style>
+             body {
+                display: flex;
+                min-height: 100vh;
+                flex-direction: column;
+            }
+
+            main {
+                flex: 1 0 auto;
+            }
+
+            footer {
+                margin-top: 30px;
+                color: white;
+            }
+
+            footer a {
+                color: lightblue;
+            }
+
             .navbar-fixed {
                 height: 80px;
             }
@@ -124,89 +141,99 @@
             </nav>
         </div>
 
-        <div class="container">
-            {% if not request.session.loggedin_id %}
-            <div class="signup_msg">
-                <div style="margin-right:10px;">
-                    <a href="{% url 'users:signup' %}" class="btn btn-floating deep-orange pulse"><i class="material-icons">card_membership</i></a>
-                </div>
-                <div>
-                    <a href="{% url 'users:signup' %}">SIGN UP</a> to get automatic food suggestions based on you and your friends' preferences!
-                </div>
-            </div>
-            {% endif %}
-
-            {% if messages %}
-            <div style="color:red; text-align:center;">
-                <h5>ERRORS:</h5>
-                <ul>
-                    {% for message in messages %}
-                    <li>- {{message}}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-
-            <div class="row">
+        <main>
+        
+            <div class="container">
                 {% if not request.session.loggedin_id %}
-                <div class="col s12 m6">
-                {% else %}
-                <div class="center" style="width:50%; margin:0 auto;">
+                <div class="signup_msg">
+                    <div style="margin-right:10px;">
+                        <a href="{% url 'users:signup' %}" class="btn btn-floating deep-orange pulse"><i class="material-icons">card_membership</i></a>
+                    </div>
+                    <div>
+                        <a href="{% url 'users:signup' %}">SIGN UP</a> to get automatic food suggestions based on you and your friends' preferences!
+                    </div>
+                </div>
                 {% endif %}
-                    <h5>Search:</h5>
-                    <div class="form">
-                        <form id="form_search">
+
+                {% if messages %}
+                <div style="color:red; text-align:center;">
+                    <h5>ERRORS:</h5>
+                    <ul>
+                        {% for message in messages %}
+                        <li>- {{message}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <div class="row">
+                    {% if not request.session.loggedin_id %}
+                    <div class="col s12 m6">
+                    {% else %}
+                    <div class="center" style="width:50%; margin:0 auto;">
+                    {% endif %}
+                        <h5>Search:</h5>
+                        <div class="form">
+                            <form id="form_search">
+                                {% csrf_token %}
+                                <div class="input-field">
+                                    <i class="material-icons prefix">restaurant_menu</i>
+                                    <input type="text" name="term" id="search_term" class="validate" value="{{ request.session.term }}">
+                                    <label for="search_term">FOOD</label>
+                                </div>
+
+                                <div class="input-field">
+                                    <i class="material-icons prefix">location_on</i>
+                                    <input type="text" name="location" id="search_location" class="validate" value="{{ request.session.location }}">
+                                    <label for="search_location">LOCATION</label>
+                                </div>
+
+                                <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Search
+                                    <i class="material-icons right">search</i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {% if not request.session.loggedin_id %}
+                    <div class="col s12 m6">
+                        <h5>Log In:</h5>
+                        <form action="{% url 'users:login' %}" method="POST">
                             {% csrf_token %}
                             <div class="input-field">
-                                <i class="material-icons prefix">restaurant_menu</i>
-                                <input type="text" name="term" id="search_term" class="validate" value="{{ request.session.term }}">
-                                <label for="search_term">FOOD</label>
+                                <i class="material-icons prefix">account_circle</i>
+                                <input type="email" name="email" id="email" class="validate" value="{{ request.session.login_email }}">
+                                <label for="email">EMAIL</label>
                             </div>
 
                             <div class="input-field">
-                                <i class="material-icons prefix">location_on</i>
-                                <input type="text" name="location" id="search_location" class="validate" value="{{ request.session.location }}">
-                                <label for="search_location">LOCATION</label>
+                                <i class="material-icons prefix">lock</i>
+                                <input type="password" name="password" id="password" class="validate">
+                                <label for="search_location">PASSWORD</label>
                             </div>
 
-                            <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Search
-                                <i class="material-icons right">search</i>
+                            <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Log In
+                                <i class="material-icons right">account_box</i>
                             </button>
                         </form>
                     </div>
+                    {% endif %}
                 </div>
 
-                {% if not request.session.loggedin_id %}
-                <div class="col s12 m6">
-                    <h5>Log In:</h5>
-                    <form action="{% url 'users:login' %}" method="POST">
-                        {% csrf_token %}
-                        <div class="input-field">
-                            <i class="material-icons prefix">account_circle</i>
-                            <input type="email" name="email" id="email" class="validate" value="{{ request.session.login_email }}">
-                            <label for="email">EMAIL</label>
-                        </div>
-
-                        <div class="input-field">
-                            <i class="material-icons prefix">lock</i>
-                            <input type="password" name="password" id="password" class="validate">
-                            <label for="search_location">PASSWORD</label>
-                        </div>
-
-                        <button class="btn waves-effect waves-light deep-orange darken-2" type="submit" name="action">Log In
-                            <i class="material-icons right">account_box</i>
-                        </button>
-                    </form>
-                </div>
-                {% endif %}
-            </div>
-
-            <div class="results">
-                <div class="progress deep-orange darken-3" style="display:none;">
-                    <div class="indeterminate deep-orange lighten-2"></div>
+                <div class="results">
+                    <div class="progress deep-orange darken-3" style="display:none;">
+                        <div class="indeterminate deep-orange lighten-2"></div>
+                    </div>
                 </div>
             </div>
-        </div>
+
+        </main>
+
+        <footer class="page_footer deep-orange darken-2">
+            <div class="center">
+                <p>&copy; 2017 <a href="http://github.com/chaocharliehuang">Chao Charlie Huang</a> | Built using Django and Yelp Fusion API</p>
+            </div>
+        </footer>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js"></script>
@@ -225,6 +252,32 @@
                         $('.results').prepend(
                             '<div class="progress deep-orange darken-3" style="display:none;"><div class="indeterminate deep-orange lighten-2"></div></div>'
                         ); 
+                    }
+                });
+            });
+
+            $(window).scroll(function() {
+                if($(window).scrollTop() + $(window).height() == $(document).height()) {
+                    $('.more_results').show();
+                }
+            });
+
+            $(document).on('click', '.more_results a', function(e) {
+                e.preventDefault();
+                var link = $(this);
+                var more_results_div = $(this).parent().parent().parent();
+                $('.progress2').fadeIn('slow');
+                $.ajax({
+                    url: '/query_api',
+                    method: 'GET',
+                    data: $(this).parent().parent().serialize(),
+                    success: function(res) {
+                        link.remove();
+                        $('.more_results').first().remove();
+                        $('.results').append(res);
+                        setTimeout(function() {
+                            $('.progress2').first().remove();
+                        }, 6000);
                     }
                 });
             });

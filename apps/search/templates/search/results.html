@@ -26,6 +26,19 @@
 </div>
 {% endfor %}
 
+{% if businesses.has_next %}
+<div class="more_results" style="display:none; margin: 0 auto;">
+    <form method="GET">
+        {% csrf_token %}
+        <input type="hidden" name="next_page" value="{{ businesses.next_page_number }}">
+        <p><a href="/">More results</a></p>
+    </form>
+</div>
+<div class="progress progress2 deep-orange darken-3" style="display:none;">
+    <div class="indeterminate deep-orange lighten-2"></div>
+</div>
+{% endif %}
+
 <script>
     $('.card').each(function(i) {
         $(this).delay(200*i).fadeIn(300);

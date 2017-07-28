@@ -62,6 +62,7 @@ def process_signup(request):
         request.session['last_name'] = ''
         request.session['email'] = ''
         request.session['zipcode'] = ''
+        request.session['term'] = ''
         request.session['loggedin_id'] = new_user.id
         request.session['name'] = request.POST['first_name']
         request.session['first_name'] = ''
@@ -86,6 +87,7 @@ def login(request):
         for user in users:
             if bcrypt.checkpw(pw.encode(), user.pw.encode()):
                 request.session['login_email'] = ''
+                request.session['term'] = ''
                 request.session['loggedin_id'] = user.id
                 request.session['name'] = user.first_name
                 return redirect(reverse('users:index'))
@@ -99,6 +101,49 @@ def logout(request):
         return redirect(reverse('search:index'))
     request.session.flush()
     return redirect(reverse('search:index'))
+
+def profile(request):
+    if 'loggedin_id' not in request.session:
+        messages.error(request, 'Must be logged in to view')
+        return redirect(reverse('users:signup'))
+    current_user = User.objects.get(id=request.session['loggedin_id'])
+    fav_foods = current_user.fav_foods.all()
+    fav_foods_ids = []
+    for food in fav_foods:
+        fav_foods_ids.append(food.id)
+    context = {
+        'user': current_user,
+        'fav_foods_ids': fav_foods_ids
+    }
+    return render(request, 'users/profile.html', context)
+
+def update_profile(request):
+    if request.method == 'POST':
+        # FORM VALIDATION
+        errors = User.objects.user_validator(request)
+        if len(errors):
+            for tag, error in errors.iteritems():
+                messages.error(request, error, extra_tags=tag)
+            return redirect(reverse('users:profile'))
+
+        # UPDATE USER'S DATABASE INFO
+        pw_hashed = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
+        current_user = User.objects.get(id=request.session['loggedin_id'])
+        current_user.first_name = request.POST['first_name']
+        current_user.last_name = request.POST['last_name']
+        current_user.email = request.POST['email']
+        current_user.zipcode = request.POST['zipcode']
+        current_user.pw = pw_hashed
+
+        fav_foods = current_user.fav_foods.all()
+        for food in fav_foods:
+            current_user.fav_foods.remove(food)
+        for food_id in request.POST.getlist('fav_food'):
+            current_user.fav_foods.add(FoodCategory.objects.get(id=food_id))
+        current_user.save()
+        return redirect(reverse('users:profile'))
+    else:
+        return redirect(reverse('users:index'))
 
 def find_friend(request):
     if request.method == 'POST':
